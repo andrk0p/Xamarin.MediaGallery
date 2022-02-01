@@ -1,5 +1,4 @@
 ﻿using System;
-using Xamarin.Essentials;
 
 namespace NativeMedia
 {
@@ -8,9 +7,10 @@ namespace NativeMedia
         internal static Exception NotSupportedOrImplementedException
             => new NotImplementedException("This functionality is not implemented in the portable version of this assembly. " +
                 "You should reference the NuGet package from your main application project in order to reference the platform-specific implementation.");
-
+#if __MOBILE__
         internal static PermissionException PermissionException(PermissionStatus status)
             => new PermissionException($"{nameof(SaveMediaPermission)} was not granted: {status}");
+#endif
 
         private static bool? isSupported;
 
@@ -19,7 +19,7 @@ namespace NativeMedia
             if (!isSupported.HasValue)
             {
                  isSupported
-#if MONOANDROID
+#if __DROID__
                  = Platform.HasSdkVersion(21);
 #elif __IOS__
                  = Platform.HasOSVersion(11);
@@ -31,7 +31,7 @@ namespace NativeMedia
                 throw NotSupportedOrImplementedException;
         }
 
-#if MONOANDROID
+#if __DROID__
         internal static Exception ActivityNotDetected
             => new NullReferenceException("The current Activity can not be detected. " +
                 $"Ensure that you have called Xamarin.Essentials.Platform.Init in your Activity or Application class.");

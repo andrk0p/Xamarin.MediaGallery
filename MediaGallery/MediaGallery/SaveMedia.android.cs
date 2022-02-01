@@ -4,17 +4,11 @@ using System.Threading.Tasks;
 using Android.Content;
 using Android.Provider;
 using Android.Webkit;
-using Xamarin.Essentials;
 using Environment = Android.OS.Environment;
 using File = Java.IO.File;
 using Path = System.IO.Path;
 using Stream = System.IO.Stream;
 using Uri = Android.Net.Uri;
-#if MONOANDROID11_0
-using MediaColumns = Android.Provider.MediaStore.IMediaColumns;
-#else
-using MediaColumns = Android.Provider.MediaStore.MediaColumns;
-#endif
 
 namespace NativeMedia
 {
@@ -41,7 +35,7 @@ namespace NativeMedia
 
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             var extension = Path.GetExtension(fileName).ToLower();
-            var newFileName = $"{fileNameWithoutExtension}_{dateTimeNow:yyyyMMdd_HHmmss}{extension}";
+            var newFileName = $"{GetNewImageName(dateTimeNow, fileNameWithoutExtension)}{extension}";
 
             using var values = new ContentValues();
 

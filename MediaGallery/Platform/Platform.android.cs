@@ -1,13 +1,16 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
+using AndroidUri = Android.Net.Uri;
+using ContentFileProvider = AndroidX.Core.Content.FileProvider;
 
 namespace NativeMedia
 {
     /// <summary>Platform specific helpers.</summary>
     public static partial class Platform
     {
-        internal static int requestCode = 1111;
+        internal static int pickRequestCode = 1111;
+        internal static int cameraRequestCode = 1112;
 
         /// <summary>Initialize Xamarin.MediaGallery with Android's activity and bundle.</summary>
         /// <param name="activity">Activity to use for initialization.</param>
@@ -25,10 +28,27 @@ namespace NativeMedia
             => MediaGallery.CheckCanProcessResult(requestCode, resultCode, intent);
 
         internal static Activity AppActivity
-            => Xamarin.Essentials.Platform.CurrentActivity
+            => EssentialsEx.Platform.CurrentActivity
             ?? throw ExceptionHelper.ActivityNotDetected;
 
         internal static bool HasSdkVersion(int version)
             => (int)Build.VERSION.SdkInt >= version;
+
+        internal static bool IsIntentSupported(Intent intent)
+        {
+            using var activity = intent.ResolveActivity(AppActivity.PackageManager);
+            return activity != null;
+        }
+            
+    }
+
+    [ContentProvider(new[] { "${applicationId}" + Authority },Name = "haraba.fileProvider", Exported = false, GrantUriPermissions = true)]
+    [MetaData("android.support.FILE_PROVIDER_PATHS", Resource = "@xml/file_provider_paths")]
+    public class MediaFileProvider : ContentFileProvider
+    {
+        internal const string Authority = ".mediaFileProvider";
+
+        internal static AndroidUri GetUriForFile(Context context, Java.IO.File file)
+            => GetUriForFile(context, context.PackageName + Authority, file);
     }
 }

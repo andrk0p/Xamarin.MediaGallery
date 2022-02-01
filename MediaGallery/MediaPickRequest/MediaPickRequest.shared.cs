@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Linq;
+﻿using System.Linq;
 
 namespace NativeMedia
 {
@@ -26,7 +25,12 @@ namespace NativeMedia
         /// <summary>Media file types available for picking.</summary>
         public string Title { get; set; }
 
-        /// <summary>Gets or sets the source rectangle to display the Share UI from. This is only used on iPad currently.</summary>
-        public Rectangle PresentationSourceBounds { get; set; } = default;
+        /// <summary>Gets or sets the source rectangle to display the Picker UI from. This is only used on iPad currently.</summary>
+        /// <remarks>Xamarin - System.Drawing.Rectangle; &nbsp;
+        /// .net6(MAUI) - Microsoft.Maui.Graphics.Rectangle;</remarks>
+        public object PresentationSourceBounds { get; set; } = default;
+
+        /// <summary>Gets or sets whether to use Intent.CreateChooser. Currently used only for Android.</summary>
+        public bool UseCreateChooser { get; set; } = true;
     }
 }
